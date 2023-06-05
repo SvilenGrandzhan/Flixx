@@ -1,11 +1,9 @@
                     -= To Do list =-
 
-1. Build router. Run specific code on specific page. Use switch
-2. add additional category: Actors
-3. Highlight every category when active. Use getAttribute
-4. Get popular movies. Use async await. Use .env file for API key.
-   4.1 Optional to do pagination for popular movies
-   4.2 Optional to create every element with JS
+1. Build router. Run specific code on specific page. Use switch - done
+2. add additional category: Actors - done
+3. Highlight every category when active. Use getAttribute - done
+4. Get popular movies. Use async await. Use .env file for API key. - to use .env need to have NodeJS or React
 5. Show / hide spinner
 6. Get popular TV shows
    6.1 Check if I can make it with only one function for popular movies and TV shows
@@ -21,3 +19,5 @@ Optional:
 2. check if there is popular actors / people
 3. check if I can do actors / people details
 4. check if I can do slider for actors / people
+   4.1 Optional to do pagination for popular movies
+   4.2 Optional to create every element with JS
