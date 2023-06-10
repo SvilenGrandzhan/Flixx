@@ -1,6 +1,7 @@
 // Created variable in global scope
 const global = {
   pathname: window.location.pathname,
+  search: window.location.search,
   API_KEY: 'e6da4e97035f119e8f32a02bd2fd3344',
   API_URL: 'https://api.themoviedb.org/3/',
 }
@@ -12,6 +13,10 @@ const create = (tagName, props) => {
 const aChild = (parent, child) => {
   parent.appendChild(child)
   return parent
+}
+// af to add comas to number
+const addComasToNumber = (number) => {
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
 
 //Function to highlight selected category
@@ -136,6 +141,95 @@ const getPopularActors = async () => {
   })
 }
 
+// Get movie detail
+const getMovieDetail = async () => {
+  const movieId = global.search.split('=')
+  const movieDetail = await fetchData(`movie/${movieId[1]}`)
+  const divDetailsTop = create('div', {
+    className: 'details-top',
+  })
+  const divTopFirst = create('div', {
+    id: 'top-first',
+  })
+  const image = create('img', {
+    src: `https://image.tmdb.org/t/p/w500${movieDetail.poster_path}`,
+    className: 'card-img-top',
+    alt: `${movieDetail.original_title}`,
+  })
+  const divTopSecond = create('div', {
+    id: 'top-second',
+  })
+  const h2Top = create('h2', {
+    textContent: `${movieDetail.original_title}`,
+  })
+  const pRating = create('p', {
+    id: 'p-rating',
+  })
+  const i = create('i', {
+    className: 'fas fa-star text-primary',
+    textContent: ` ${movieDetail.vote_average.toFixed(1)}`,
+  })
+  const pReleaseDate = create('p', {
+    className: 'text-muted',
+    textContent: `Release Date: ${movieDetail.release_date}`,
+  })
+  const pOverview = create('p', {
+    textContent: `${movieDetail.overview}`,
+  })
+  const h5 = create('h5', {
+    textContent: 'Genres',
+  })
+  const ulGenre = create('ul', {
+    id: 'ulGenre',
+    className: 'list-group',
+  })
+  const liGenre = create('li', {
+    textContent: `${movieDetail.genres[0].name}`,
+  })
+  const homePage = create('a', {
+    href: `${movieDetail.homepage}`,
+    target: '_blank',
+    className: 'btn',
+    textContent: 'Visit Movie Homepage',
+  })
+  const divDetailsBottom = create('div', {
+    className: 'details-bottom',
+  })
+  const h2Bottom = create('h2', {
+    textContent: 'Movie Info',
+  })
+  const ulInfo = create('ul', {
+    id: 'additionalInfo',
+  })
+  const liInfo = create('li', {
+    textContent: `Budget: $${addComasToNumber(movieDetail.budget)}`,
+  })
+  const span = create('span', {
+    className: 'text-secondary',
+  })
+  const h4 = create('h4', {
+    textContent: 'Production Companies :',
+  })
+  const divCompanies = create('div', {
+    textContent: `${movieDetail.production_companies[0].name}`,
+  })
+  aChild(divDetailsTop, aChild(divTopFirst, image))
+  aChild(divDetailsTop, aChild(divTopSecond, h2Top))
+  aChild(divDetailsTop, aChild(divTopSecond, pRating))
+  aChild(divDetailsTop, aChild(divTopSecond, aChild(pRating, i)))
+  aChild(divDetailsTop, aChild(divTopSecond, pReleaseDate))
+  aChild(divDetailsTop, aChild(divTopSecond, pOverview))
+  aChild(divDetailsTop, aChild(divTopSecond, h5))
+  aChild(divDetailsTop, aChild(divTopSecond, aChild(ulGenre, liGenre)))
+  aChild(divDetailsTop, aChild(divTopSecond, homePage))
+  aChild(divDetailsBottom, h2Bottom)
+  aChild(divDetailsBottom, aChild(ulInfo, aChild(liInfo, span)))
+  aChild(divDetailsBottom, h4)
+  aChild(divDetailsBottom, divCompanies)
+  aChild(document.getElementById('movie-details'), divDetailsTop)
+  aChild(document.getElementById('movie-details'), divDetailsBottom)
+}
+
 //General function for API Get request
 const fetchData = async (reference) => {
   const response = await fetch(
@@ -162,7 +256,7 @@ const init = () => {
       console.log(global.pathname)
       break
     case '/movie-details.html':
-      console.log(global.pathname)
+      getMovieDetail()
       break
     case '/tv-details.html':
       console.log(global.pathname)

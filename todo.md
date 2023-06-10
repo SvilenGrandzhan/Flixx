@@ -4,7 +4,7 @@
 2. add additional category: Actors - done
 3. Highlight every category when active. Use getAttribute - done
 4. Get popular movies. Use async await. Use .env file for API key. - to use .env need to have NodeJS or React
-5. Show / hide spinner
+5. -- Show / hide spinner
 6. Get popular TV shows
    6.1 Check if I can make it with only one function for popular movies and TV shows
 7. Movie details. use window.location.search and split method
