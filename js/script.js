@@ -29,9 +29,20 @@ const highlightSelected = () => {
     }
   })
 }
+//Arrow function to get the id of target element
+const getId = async (category) => {
+  const id = global.search.split('=')
+  const detail = await fetchData(`${category}/${id[1]}`)
+  // const detail = response.json()
+  // console.log(detail)
+  return detail
+}
+
 // Get popular movies
 const getPopularMovies = async () => {
-  const moviesList = await fetchData('movie/popular')
+  // const moviesList = await fetchData('movie/popular')
+  const moviesList = await fetchData('movie/top_rated')
+  console.log(moviesList.results)
   moviesList.results.forEach((movie) => {
     const div = create('div', {
       className: 'card',
@@ -68,7 +79,9 @@ const getPopularMovies = async () => {
 }
 // Get popular TV Shows
 const getPopularTVShow = async () => {
-  const tvShowsList = await fetchData('tv/popular')
+  // const tvShowsList = await fetchData('tv/popular')
+  const tvShowsList = await fetchData('tv/top_rated')
+  console.log(tvShowsList.results)
   tvShowsList.results.forEach((tvShow) => {
     const div = create('div', {
       className: 'card',
@@ -107,7 +120,6 @@ const getPopularTVShow = async () => {
 const getPopularActors = async () => {
   const actors = await fetchData('person/popular')
   actors.results.forEach((actor) => {
-    console.log(actor)
     const div = create('div', {
       className: 'card',
     })
@@ -143,8 +155,9 @@ const getPopularActors = async () => {
 
 // Get movie detail
 const getMovieDetail = async () => {
-  const movieId = global.search.split('=')
-  const movieDetail = await fetchData(`movie/${movieId[1]}`)
+  // calling getId and passing movie as category
+  const movieDetail = await getId('movie')
+  console.log(movieDetail)
   const divDetailsTop = create('div', {
     className: 'details-top',
   })
@@ -230,10 +243,185 @@ const getMovieDetail = async () => {
   aChild(document.getElementById('movie-details'), divDetailsBottom)
 }
 
+//Get TV show details
+const getTvShowDetails = async () => {
+  const tvShowDetails = await getId('tv')
+  console.log(tvShowDetails)
+  const divDetailsTop = create('div', {
+    className: 'details-top',
+  })
+  const divTopFirst = create('div', {
+    id: 'top-fist',
+  })
+  const image = create('img', {
+    // src: 'images/no-image.jpg',
+    src: `https://image.tmdb.org/t/p/w500${tvShowDetails.poster_path}`,
+    className: ' card-img-top',
+    alt: `${tvShowDetails.original_name}`,
+  })
+  const divTopSecond = create('div', {
+    id: 'top-second',
+  })
+  const h2Top = create('h2', {
+    id: 'shown-name',
+    textContent: `${tvShowDetails.original_name}`,
+  })
+  const pRating = create('p', {
+    id: 'p-rating',
+  })
+  const i = create('i', {
+    className: 'fas fa-star text-primary',
+    textContent: ` ${tvShowDetails.vote_average.toFixed(1)}`,
+  })
+  const pReleaseDate = create('p', {
+    id: 'p-release-date',
+    className: 'text-muted',
+    textContent: `Release Date: ${tvShowDetails.first_air_date}`,
+  })
+  const pOverview = create('p', {
+    id: 'p-overview',
+    textContent: `${tvShowDetails.overview}`,
+  })
+  const h5 = create('h5', {
+    textContent: 'Genres',
+  })
+  const ulGenre = create('ul', {
+    id: 'ul-genre',
+    className: 'list-group',
+  })
+  const liGenre = create('li', {
+    textContent: `${tvShowDetails.genres[0].name}`,
+  })
+  const a = create('a', {
+    href: `${tvShowDetails.homepage}`,
+    target: '_blank',
+    className: 'btn',
+    textContent: 'Visit Show Homepage',
+  })
+  const divDetailsBottom = create('div', {
+    className: 'details-bottom',
+  })
+  const h2Bottom = create('h2', {
+    id: 'show-info',
+    textContent: 'Show Info',
+  })
+  const ulInfo = create('ul', {
+    id: 'additional-info',
+  })
+  const liInfo = create('li', {
+    textContent: `${tvShowDetails.number_of_episodes}`,
+  })
+  const span = create('span', {
+    className: 'text-secondary',
+    textContent: 'Number of Episodes: ',
+  })
+  const h4 = create('h4', {
+    textContent: 'Production Companies',
+  })
+  const divCompanies = create('div', {
+    id: 'companies-list',
+    className: 'list-group',
+    textContent: `${tvShowDetails.production_companies[0].name}`,
+  })
+  aChild(divDetailsTop, aChild(divTopFirst, image))
+  aChild(divDetailsTop, aChild(divTopSecond, h2Top))
+  aChild(divDetailsTop, aChild(divTopSecond, aChild(pRating, i)))
+  aChild(divDetailsTop, aChild(divTopSecond, pReleaseDate))
+  aChild(divDetailsTop, aChild(divTopSecond, pOverview))
+  aChild(divDetailsTop, aChild(divTopSecond, h5))
+  aChild(divDetailsTop, aChild(divTopSecond, aChild(ulGenre, liGenre)))
+  aChild(divDetailsTop, aChild(divTopSecond, a))
+  aChild(divDetailsBottom, h2Bottom)
+  aChild(divDetailsBottom, aChild(ulInfo, aChild(liInfo, span)))
+  aChild(divDetailsBottom, h4)
+  aChild(divDetailsBottom, divCompanies)
+  aChild(document.getElementById('show-details'), divDetailsTop)
+  aChild(document.getElementById('show-details'), divDetailsBottom)
+}
+
+//Get actor details
+const getActorDetails = async () => {
+  const actorDetails = await getId('person')
+  console.log(actorDetails)
+  const gender = actorDetails.gender == 2 ? 'Male' : 'Female'
+  const divDetailsTop = create('div', {
+    className: 'details-top',
+  })
+  const divTopFirst = create('div', {
+    id: 'top-first',
+  })
+  const image = create('img', {
+    // src:"images/no-image.jpg",
+    src: `https://image.tmdb.org/t/p/w500${actorDetails.profile_path}`,
+    className: 'card-img-top',
+    alt: `${actorDetails.name}`,
+  })
+  const divTopSecond = create('div', {
+    id: 'top-second',
+  })
+  const h2Top = create('h2', {
+    textContent: `${actorDetails.name}`,
+  })
+  const pRating = create('p', {
+    id: 'p-rating',
+    textContent: `${actorDetails.popularity.toFixed(0)}`,
+  })
+  const i = create('i', {
+    className: 'fas fa-star text-primary',
+  })
+  const pBio = create('p', {
+    id: 'p-bio',
+    textContent: `${actorDetails.biography}`,
+  })
+  const h4 = create('h4', {
+    textContent: 'Known for',
+  })
+  const ulKnown = create('ul', {
+    id: 'ul-known-for',
+    className: 'list-group',
+  })
+  const liKnown = create('li', {
+    textContent: `${actorDetails.known_for_department}`,
+  })
+  const link = create('a', {
+    href: `https://www.imdb.com/name/${actorDetails.imdb_id}`,
+    target: '_blank',
+    className: 'btn',
+    textContent: 'Visit IMDB Page',
+  })
+  const divDetailsBottom = create('div', {
+    className: 'details-bottom',
+  })
+  const h2Bottom = create('h2', {
+    textContent: 'Actor Info',
+  })
+  const ulInfo = create('ul', {
+    id: 'ul-info',
+  })
+  const liGender = create('li', {
+    textContent: gender,
+  })
+  const span = create('span', {
+    className: 'text-secondary',
+    textContent: 'Gender:',
+  })
+  aChild(divDetailsTop, aChild(divTopFirst, image))
+  aChild(divDetailsTop, aChild(divTopSecond, h2Top))
+  aChild(divDetailsTop, aChild(divTopSecond, aChild(pRating, i)))
+  aChild(divDetailsTop, aChild(divTopSecond, pBio))
+  aChild(divDetailsTop, aChild(divTopSecond, h4))
+  aChild(divDetailsTop, aChild(divTopSecond, aChild(ulKnown, liKnown)))
+  aChild(divDetailsTop, aChild(divTopSecond, link))
+  aChild(divDetailsBottom, h2Bottom)
+  aChild(divDetailsBottom, aChild(ulInfo, aChild(liGender, span)))
+  document.getElementById('show-details').appendChild(divDetailsTop)
+  document.getElementById('show-details').appendChild(divDetailsBottom)
+}
+
 //General function for API Get request
 const fetchData = async (reference) => {
   const response = await fetch(
-    `${global.API_URL}${reference}?api_key=${global.API_KEY}&language=en-US`
+    `${global.API_URL}${reference}?api_key=${global.API_KEY}&language=en-US&sort_by=vote_average.desc`
   )
   const data = await response.json()
   return data
@@ -259,10 +447,10 @@ const init = () => {
       getMovieDetail()
       break
     case '/tv-details.html':
-      console.log(global.pathname)
+      getTvShowDetails()
       break
     case '/actor-details.html':
-      console.log(global.pathname)
+      getActorDetails()
       break
   }
   // Added it to initial function -> DOM content load
