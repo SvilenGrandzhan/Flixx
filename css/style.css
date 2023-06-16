@@ -171,8 +171,16 @@ ul {
   color: #fff;
 }
 
-.main-footer .container .social-links a:hover {
-  color: var(--color-secondary);
+.f :hover {
+  color: #4267B2
+}
+
+.t :hover{
+  color: #1DA1F2
+}
+
+.i :hover {
+  color: #C13584
 }
 
 /* Section: Now Playing */

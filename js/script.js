@@ -229,13 +229,15 @@ const getMovieDetail = async () => {
     id: 'additionalInfo',
   })
   const liInfo = create('li', {
-    textContent: `Budget: $${addComasToNumber(movieDetails.budget)}`,
+    id: 'liInfo',
   })
   const span = create('span', {
     className: 'text-secondary',
+    textContent: 'Budget:',
   })
   const h4 = create('h4', {
     textContent: 'Production Companies :',
+    className: 'text-secondary',
   })
   const divCompanies = create('div', {
     textContent: `${movieDetails.production_companies[0].name}`,
@@ -254,6 +256,7 @@ const getMovieDetail = async () => {
   aChild(divDetailsBottom, aChild(ulInfo, aChild(liInfo, span)))
   aChild(divDetailsBottom, h4)
   aChild(divDetailsBottom, divCompanies)
+  span.after(` $${addComasToNumber(movieDetails.budget)}`)
   aChild(document.getElementById('movie-details'), divDetailsTop)
   aChild(document.getElementById('movie-details'), divDetailsBottom)
 }
@@ -329,7 +332,8 @@ const getTvShowDetails = async () => {
     textContent: 'Number of Episodes: ',
   })
   const h4 = create('h4', {
-    textContent: 'Production Companies',
+    textContent: 'Production Companies:',
+    className: 'text-secondary',
   })
   const divCompanies = create('div', {
     id: 'companies-list',
