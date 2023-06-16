@@ -18,7 +18,6 @@ const aChild = (parent, child) => {
 const addComasToNumber = (number) => {
   return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
-
 //Function to highlight selected category
 const highlightSelected = () => {
   document.querySelectorAll('.nav-link').forEach((li) => {
@@ -37,12 +36,27 @@ const getId = async (category) => {
   // console.log(detail)
   return detail
 }
+// Arrow function for background picture
+const backgroundPic = (type, backgroundPath) => {
+  // Need to find a way to do it with Create function
+  const backgroundDiv = document.createElement('div')
+  backgroundDiv.style.backgroundImage = `url(https://image.tmdb.org/t/p/original${backgroundPath})`
+  backgroundDiv.style.backgroundSize = 'cover'
+  backgroundDiv.style.backgroundPosition = 'no-repeat'
+  backgroundDiv.style.height = '100vh'
+  backgroundDiv.style.width = '100vw'
+  backgroundDiv.style.position = 'absolute'
+  backgroundDiv.style.top = '0'
+  backgroundDiv.style.lef = '0'
+  backgroundDiv.style.zIndex = '-1'
+  backgroundDiv.style.opacity = '0.1'
+  aChild(document.querySelector(`#${type}-details`), backgroundDiv)
+}
 
 // Get popular movies
 const getPopularMovies = async () => {
   // const moviesList = await fetchData('movie/popular')
   const moviesList = await fetchData('movie/top_rated')
-  console.log(moviesList.results)
   moviesList.results.forEach((movie) => {
     const div = create('div', {
       className: 'card',
@@ -156,8 +170,9 @@ const getPopularActors = async () => {
 // Get movie detail
 const getMovieDetail = async () => {
   // calling getId and passing movie as category
-  const movieDetail = await getId('movie')
-  console.log(movieDetail)
+  const movieDetails = await getId('movie')
+  console.log(movieDetails)
+  backgroundPic('movie', `${movieDetails.backdrop_path}`)
   const divDetailsTop = create('div', {
     className: 'details-top',
   })
@@ -165,29 +180,28 @@ const getMovieDetail = async () => {
     id: 'top-first',
   })
   const image = create('img', {
-    src: `https://image.tmdb.org/t/p/w500${movieDetail.poster_path}`,
+    src: `https://image.tmdb.org/t/p/w500${movieDetails.poster_path}`,
     className: 'card-img-top',
-    alt: `${movieDetail.original_title}`,
+    alt: `${movieDetails.original_title}`,
   })
   const divTopSecond = create('div', {
     id: 'top-second',
   })
   const h2Top = create('h2', {
-    textContent: `${movieDetail.original_title}`,
+    textContent: `${movieDetails.original_title}`,
   })
   const pRating = create('p', {
     id: 'p-rating',
   })
   const i = create('i', {
     className: 'fas fa-star text-primary',
-    textContent: ` ${movieDetail.vote_average.toFixed(1)}`,
   })
   const pReleaseDate = create('p', {
     className: 'text-muted',
-    textContent: `Release Date: ${movieDetail.release_date}`,
+    textContent: `Release Date: ${movieDetails.release_date}`,
   })
   const pOverview = create('p', {
-    textContent: `${movieDetail.overview}`,
+    textContent: `${movieDetails.overview}`,
   })
   const h5 = create('h5', {
     textContent: 'Genres',
@@ -197,10 +211,10 @@ const getMovieDetail = async () => {
     className: 'list-group',
   })
   const liGenre = create('li', {
-    textContent: `${movieDetail.genres[0].name}`,
+    textContent: `${movieDetails.genres[0].name}`,
   })
   const homePage = create('a', {
-    href: `${movieDetail.homepage}`,
+    href: `${movieDetails.homepage}`,
     target: '_blank',
     className: 'btn',
     textContent: 'Visit Movie Homepage',
@@ -215,7 +229,7 @@ const getMovieDetail = async () => {
     id: 'additionalInfo',
   })
   const liInfo = create('li', {
-    textContent: `Budget: $${addComasToNumber(movieDetail.budget)}`,
+    textContent: `Budget: $${addComasToNumber(movieDetails.budget)}`,
   })
   const span = create('span', {
     className: 'text-secondary',
@@ -224,12 +238,13 @@ const getMovieDetail = async () => {
     textContent: 'Production Companies :',
   })
   const divCompanies = create('div', {
-    textContent: `${movieDetail.production_companies[0].name}`,
+    textContent: `${movieDetails.production_companies[0].name}`,
   })
   aChild(divDetailsTop, aChild(divTopFirst, image))
   aChild(divDetailsTop, aChild(divTopSecond, h2Top))
   aChild(divDetailsTop, aChild(divTopSecond, pRating))
   aChild(divDetailsTop, aChild(divTopSecond, aChild(pRating, i)))
+  i.after(` ${movieDetails.vote_average.toFixed(1)}`)
   aChild(divDetailsTop, aChild(divTopSecond, pReleaseDate))
   aChild(divDetailsTop, aChild(divTopSecond, pOverview))
   aChild(divDetailsTop, aChild(divTopSecond, h5))
@@ -247,6 +262,7 @@ const getMovieDetail = async () => {
 const getTvShowDetails = async () => {
   const tvShowDetails = await getId('tv')
   console.log(tvShowDetails)
+  backgroundPic('show', `${tvShowDetails.backdrop_path}`)
   const divDetailsTop = create('div', {
     className: 'details-top',
   })
@@ -271,7 +287,6 @@ const getTvShowDetails = async () => {
   })
   const i = create('i', {
     className: 'fas fa-star text-primary',
-    textContent: ` ${tvShowDetails.vote_average.toFixed(1)}`,
   })
   const pReleaseDate = create('p', {
     id: 'p-release-date',
@@ -308,9 +323,7 @@ const getTvShowDetails = async () => {
   const ulInfo = create('ul', {
     id: 'additional-info',
   })
-  const liInfo = create('li', {
-    textContent: `${tvShowDetails.number_of_episodes}`,
-  })
+  const liInfo = create('li', {})
   const span = create('span', {
     className: 'text-secondary',
     textContent: 'Number of Episodes: ',
@@ -326,6 +339,7 @@ const getTvShowDetails = async () => {
   aChild(divDetailsTop, aChild(divTopFirst, image))
   aChild(divDetailsTop, aChild(divTopSecond, h2Top))
   aChild(divDetailsTop, aChild(divTopSecond, aChild(pRating, i)))
+  i.after(` ${tvShowDetails.vote_average.toFixed(1)}`)
   aChild(divDetailsTop, aChild(divTopSecond, pReleaseDate))
   aChild(divDetailsTop, aChild(divTopSecond, pOverview))
   aChild(divDetailsTop, aChild(divTopSecond, h5))
@@ -333,6 +347,7 @@ const getTvShowDetails = async () => {
   aChild(divDetailsTop, aChild(divTopSecond, a))
   aChild(divDetailsBottom, h2Bottom)
   aChild(divDetailsBottom, aChild(ulInfo, aChild(liInfo, span)))
+  span.after(` ${tvShowDetails.number_of_episodes}`)
   aChild(divDetailsBottom, h4)
   aChild(divDetailsBottom, divCompanies)
   aChild(document.getElementById('show-details'), divDetailsTop)
@@ -343,6 +358,7 @@ const getTvShowDetails = async () => {
 const getActorDetails = async () => {
   const actorDetails = await getId('person')
   console.log(actorDetails)
+  backgroundPic('actor', `${actorDetails.profile_path}`)
   const gender = actorDetails.gender == 2 ? 'Male' : 'Female'
   const divDetailsTop = create('div', {
     className: 'details-top',
@@ -364,7 +380,6 @@ const getActorDetails = async () => {
   })
   const pRating = create('p', {
     id: 'p-rating',
-    textContent: `${actorDetails.popularity.toFixed(0)}`,
   })
   const i = create('i', {
     className: 'fas fa-star text-primary',
@@ -398,24 +413,24 @@ const getActorDetails = async () => {
   const ulInfo = create('ul', {
     id: 'ul-info',
   })
-  const liGender = create('li', {
-    textContent: gender,
-  })
+  const liGender = create('li', {})
   const span = create('span', {
     className: 'text-secondary',
-    textContent: 'Gender:',
+    textContent: 'Gender: ',
   })
   aChild(divDetailsTop, aChild(divTopFirst, image))
   aChild(divDetailsTop, aChild(divTopSecond, h2Top))
   aChild(divDetailsTop, aChild(divTopSecond, aChild(pRating, i)))
+  i.after(` ${actorDetails.popularity.toFixed(0)}`)
   aChild(divDetailsTop, aChild(divTopSecond, pBio))
   aChild(divDetailsTop, aChild(divTopSecond, h4))
   aChild(divDetailsTop, aChild(divTopSecond, aChild(ulKnown, liKnown)))
   aChild(divDetailsTop, aChild(divTopSecond, link))
   aChild(divDetailsBottom, h2Bottom)
   aChild(divDetailsBottom, aChild(ulInfo, aChild(liGender, span)))
-  document.getElementById('show-details').appendChild(divDetailsTop)
-  document.getElementById('show-details').appendChild(divDetailsBottom)
+  span.after(gender)
+  document.getElementById('actor-details').appendChild(divDetailsTop)
+  document.getElementById('actor-details').appendChild(divDetailsBottom)
 }
 
 //General function for API Get request
