@@ -40,7 +40,7 @@ const getId = async (category) => {
 const backgroundPic = (type, backgroundPath) => {
   // Need to find a way to do it with Create function
   const backgroundDiv = document.createElement('div')
-  backgroundDiv.style.backgroundImage = `url(https://image.tmdb.org/t/p/original${backgroundPath})`
+  backgroundDiv.style.backgroundImage = `url(${backgroundPath})`
   backgroundDiv.style.backgroundSize = 'cover'
   backgroundDiv.style.backgroundPosition = 'no-repeat'
   backgroundDiv.style.height = '100vh'
@@ -64,9 +64,13 @@ const getPopularMovies = async () => {
     const link = create('a', {
       href: `movie-details.html?id=${movie.id}`,
     })
+    const movieImgSrc =
+      movie.poster_path == null
+        ? 'images/no-image.jpg'
+        : `https://image.tmdb.org/t/p/w500${movie.poster_path}`
     const movieImage = create('img', {
       className: 'card-img-top',
-      src: `https://image.tmdb.org/t/p/w500${movie.poster_path}`,
+      src: movieImgSrc,
       alt: `${movie.title}`,
     })
     const cardBodyDiv = create('div', {
@@ -83,7 +87,7 @@ const getPopularMovies = async () => {
       className: 'text-muted',
       textContent: `Release: ${movie.release_date}`,
     })
-    // Have the feeling I can optimize this part. Maybe array?
+    // Challenge 2 : Have the feeling I can optimize this part. Maybe array?
     aChild(div, aChild(link, movieImage))
     aChild(div, aChild(cardBodyDiv, h5))
     aChild(div, aChild(cardBodyDiv, p))
@@ -103,9 +107,13 @@ const getPopularTVShow = async () => {
     const link = create('a', {
       href: `tv-details.html?id=${tvShow.id}`,
     })
+    const tvShowImgSrc =
+      tvShow.poster_path == null
+        ? 'images/no-image.jpg'
+        : `https://image.tmdb.org/t/p/w500${tvShow.poster_path}`
+
     const tvShowImage = create('img', {
-      // src: 'images/no-image.jpg',
-      src: `https://image.tmdb.org/t/p/w500${tvShow.poster_path}`,
+      src: tvShowImgSrc,
       className: 'card-img-top',
       alt: `${tvShow.name}`,
     })
@@ -133,6 +141,7 @@ const getPopularTVShow = async () => {
 // Get popular Actors
 const getPopularActors = async () => {
   const actors = await fetchData('person/popular')
+  console.log(actors)
   actors.results.forEach((actor) => {
     const div = create('div', {
       className: 'card',
@@ -140,8 +149,12 @@ const getPopularActors = async () => {
     const link = create('a', {
       href: `actor-details.html?id=${actor.id}`,
     })
+    const ActorImgSrc =
+      actor.profile_path == null
+        ? 'images/no-image.jpg'
+        : `https://image.tmdb.org/t/p/w500${actor.profile_path}`
     const actorImage = create('img', {
-      src: `https://image.tmdb.org/t/p/w500${actor.profile_path}`,
+      src: ActorImgSrc,
       className: 'card-img-top',
       alt: `${actor.name}`,
     })
@@ -179,8 +192,12 @@ const getMovieDetail = async () => {
   const divTopFirst = create('div', {
     id: 'top-first',
   })
+  const movieDetailsImgSrc =
+    movieDetails.poster_path == null
+      ? 'images/no-image.jpg'
+      : `https://image.tmdb.org/t/p/w500${movieDetails.poster_path}`
   const image = create('img', {
-    src: `https://image.tmdb.org/t/p/w500${movieDetails.poster_path}`,
+    src: movieDetailsImgSrc,
     className: 'card-img-top',
     alt: `${movieDetails.original_title}`,
   })
@@ -272,9 +289,12 @@ const getTvShowDetails = async () => {
   const divTopFirst = create('div', {
     id: 'top-fist',
   })
+  const tvShowDetailsImgSrv =
+    tvShowDetails.poster_path == null
+      ? 'images/no-image.jpg'
+      : `https://image.tmdb.org/t/p/w500${tvShowDetails.poster_path}`
   const image = create('img', {
-    // src: 'images/no-image.jpg',
-    src: `https://image.tmdb.org/t/p/w500${tvShowDetails.poster_path}`,
+    src: tvShowDetailsImgSrv,
     className: ' card-img-top',
     alt: `${tvShowDetails.original_name}`,
   })
@@ -362,7 +382,16 @@ const getTvShowDetails = async () => {
 const getActorDetails = async () => {
   const actorDetails = await getId('person')
   console.log(actorDetails)
-  backgroundPic('actor', `${actorDetails.profile_path}`)
+  const actorDetailsImgSrc =
+    actorDetails.profile_path == null
+      ? 'images/no-image.jpg'
+      : `https://image.tmdb.org/t/p/w500${actorDetails.profile_path}`
+  // Challenge 1 To find a way to do it without repeating
+  const actorDetailsBackGImgSrc =
+    actorDetails.profile_path == null
+      ? 'images/no-image.jpg'
+      : `https://image.tmdb.org/t/p/original${actorDetails.profile_path}`
+  backgroundPic('actor', `${actorDetailsBackGImgSrc}`)
   const gender = actorDetails.gender == 2 ? 'Male' : 'Female'
   const divDetailsTop = create('div', {
     className: 'details-top',
@@ -371,8 +400,7 @@ const getActorDetails = async () => {
     id: 'top-first',
   })
   const image = create('img', {
-    // src:"images/no-image.jpg",
-    src: `https://image.tmdb.org/t/p/w500${actorDetails.profile_path}`,
+    src: actorDetailsImgSrc,
     className: 'card-img-top',
     alt: `${actorDetails.name}`,
   })

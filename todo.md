@@ -21,3 +21,9 @@ Optional:
 4. check if I can do slider for actors / people - not doing that
    4.1 Optional to do pagination for popular movies
    4.2 Optional to create every element with JS
+
+Challenges:
+
+1. Script.js - Ctr + F Challenge 1
+2. Script.js - Ctr + F Challenge 2
+3. style.css - to make a circle progress bar for rating
