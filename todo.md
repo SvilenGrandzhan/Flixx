@@ -26,4 +26,8 @@ Challenges:
 
 1. Script.js - Ctr + F Challenge 1
 2. Script.js - Ctr + F Challenge 2
-3. style.css - to make a circle progress bar for rating
+3. style.css - to make a circle progress bar for rating Help: https://youtu.be/H2HYccAGR00
+
+To fix:
+
+1. background picture for actors can't fit

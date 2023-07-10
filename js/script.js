@@ -40,16 +40,8 @@ const getId = async (category) => {
 const backgroundPic = (type, backgroundPath) => {
   // Need to find a way to do it with Create function
   const backgroundDiv = document.createElement('div')
+  backgroundDiv.className = 'background-div'
   backgroundDiv.style.backgroundImage = `url(${backgroundPath})`
-  backgroundDiv.style.backgroundSize = 'cover'
-  backgroundDiv.style.backgroundPosition = 'no-repeat'
-  backgroundDiv.style.height = '100vh'
-  backgroundDiv.style.width = '100vw'
-  backgroundDiv.style.position = 'absolute'
-  backgroundDiv.style.top = '0'
-  backgroundDiv.style.lef = '0'
-  backgroundDiv.style.zIndex = '-1'
-  backgroundDiv.style.opacity = '0.1'
   aChild(document.querySelector(`#${type}-details`), backgroundDiv)
 }
 
@@ -185,7 +177,10 @@ const getMovieDetail = async () => {
   // calling getId and passing movie as category
   const movieDetails = await getId('movie')
   console.log(movieDetails)
-  backgroundPic('movie', `${movieDetails.backdrop_path}`)
+  backgroundPic(
+    'movie',
+    `https://image.tmdb.org/t/p/original${movieDetails.backdrop_path}`
+  )
   const divDetailsTop = create('div', {
     className: 'details-top',
   })
@@ -282,7 +277,10 @@ const getMovieDetail = async () => {
 const getTvShowDetails = async () => {
   const tvShowDetails = await getId('tv')
   console.log(tvShowDetails)
-  backgroundPic('show', `${tvShowDetails.backdrop_path}`)
+  backgroundPic(
+    'show',
+    `https://image.tmdb.org/t/p/original${tvShowDetails.backdrop_path}`
+  )
   const divDetailsTop = create('div', {
     className: 'details-top',
   })

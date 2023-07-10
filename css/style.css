@@ -141,6 +141,18 @@ ul {
   background: #0a4b8f;
 }
 
+/* Background Div */
+.background-div {
+  background-size: contain;
+  background-position: top 0 left 0;
+  background-repeat: no-repeat;
+  height: 100vh;
+  width: 100vw;
+  position: absolute;
+  z-index: -1;
+  opacity: 0.1;
+}
+
 /* Footer */
 .main-footer {
   background: #020d18;
@@ -172,15 +184,15 @@ ul {
 }
 
 .f :hover {
-  color: #4267B2
+  color: #4267b2;
 }
 
-.t :hover{
-  color: #1DA1F2
+.t :hover {
+  color: #1da1f2;
 }
 
 .i :hover {
-  color: #C13584
+  color: #c13584;
 }
 
 /* Section: Now Playing */
