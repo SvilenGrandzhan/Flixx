@@ -109,6 +109,9 @@ const getPopularTVShow = async () => {
       className: 'card-img-top',
       alt: `${tvShow.name}`,
     })
+    const cardBodyRatingDiv = create('div', {
+      className: 'card-body-rating',
+    })
     const cardBodyDiv = create('div', {
       className: 'card-body',
     })
@@ -123,13 +126,41 @@ const getPopularTVShow = async () => {
       className: 'text-muted',
       textContent: `Aired: ${tvShow.first_air_date}`,
     })
+    const cardRatingDiv = create('div', {
+      id: 'card-rating',
+      className: 'card-rating',
+    })
+    const spanRating = create('span', {
+      id: 'progress-value',
+      className: 'progress-value',
+      textContent: '0%',
+    })
     aChild(div, aChild(link, tvShowImage))
-    aChild(div, aChild(cardBodyDiv, h5))
-    aChild(div, aChild(cardBodyDiv, p))
-    aChild(div, aChild(cardBodyDiv, small))
+    aChild(div, aChild(cardBodyRatingDiv, cardBodyDiv))
+    aChild(cardBodyRatingDiv, aChild(cardBodyDiv, h5))
+    aChild(cardBodyRatingDiv, aChild(cardBodyDiv, p))
+    aChild(cardBodyRatingDiv, aChild(cardBodyDiv, small))
+    aChild(cardBodyRatingDiv, aChild(cardRatingDiv, spanRating))
     aChild(document.getElementById('popular-shows'), div)
   })
+  // Circler Progress Bar
+  let speed = 10
+  let progressStartValue = 0
+  let progressEndValue = 99
+  let progressValue = document.getElementById('progress-value')
+  let circularProgress = document.getElementById('card-rating')
+  let progress = setInterval(() => {
+    progressStartValue++
+    progressValue.textContent = `${progressStartValue}%`
+    circularProgress.style.background = `conic-gradient(rgb(0,128,0) ${
+      progressStartValue * 3.6
+    }deg, #fff 0deg)`
+    if (progressStartValue == progressEndValue) {
+      clearInterval(progress)
+    }
+  }, speed)
 }
+
 // Get popular Actors
 const getPopularActors = async () => {
   const actors = await fetchData('person/popular')
