@@ -142,23 +142,36 @@ const getPopularTVShow = async () => {
     aChild(cardBodyRatingDiv, aChild(cardBodyDiv, small))
     aChild(cardBodyRatingDiv, aChild(cardRatingDiv, spanRating))
     aChild(document.getElementById('popular-shows'), div)
+    change(spanRating, `${tvShow.vote_average * 10}%`)
+    change(spanRating, 10, 89)
   })
-  // Circler Progress Bar
-  let speed = 10
-  let progressStartValue = 0
-  let progressEndValue = 99
-  let progressValue = document.getElementById('progress-value')
-  let circularProgress = document.getElementById('card-rating')
-  let progress = setInterval(() => {
-    progressStartValue++
-    progressValue.textContent = `${progressStartValue}%`
-    circularProgress.style.background = `conic-gradient(rgb(0,128,0) ${
-      progressStartValue * 3.6
-    }deg, #fff 0deg)`
-    if (progressStartValue == progressEndValue) {
-      clearInterval(progress)
-    }
-  }, speed)
+}
+
+// Circler Progress Bar
+// function showRating(rating, progressValue, circularProgress) {
+//   // console.log(rating)
+//   let speed = 10
+//   let progressStartValue = 0
+//   let progressEndValue = rating
+//   // let progressValue = document.getElementById('progress-value')
+//   // let circularProgress = document.getElementById('card-rating')
+//   let progress = setInterval(() => {
+//     progressStartValue++
+//     progressValue.textContent = `${progressStartValue}%`
+//     circularProgress.style.background = `conic-gradient(rgb(0,128,0) ${
+//       progressStartValue * 3.6
+//     }deg, #fff 0deg)`
+//     if (progressStartValue == progressEndValue) {
+//       clearInterval(progress)
+//     }
+//   }, speed)
+// }
+
+function change(htmlElement, beginValue, endValue) {
+  do {
+    beginValue++
+    htmlElement.textContent = beginValue
+  } while (beginValue == endValue)
 }
 
 // Get popular Actors
@@ -193,7 +206,11 @@ const getPopularActors = async () => {
     })
     const small = create('small', {
       className: 'text-muted',
-      textContent: `Popular for ${actor.known_for_department}`,
+      textContent: `Popular for "${
+        actor.known_for[0].media_type == 'tv'
+          ? actor.known_for[0].name
+          : actor.known_for[0].title
+      }"`,
     })
     aChild(div, aChild(link, actorImage))
     aChild(div, aChild(cardBodyDiv, h5))
@@ -253,8 +270,11 @@ const getMovieDetail = async () => {
     id: 'ulGenre',
     className: 'list-group',
   })
-  const liGenre = create('li', {
-    textContent: `${movieDetails.genres[0].name}`,
+  movieDetails.genres.forEach((element) => {
+    const genreName = create('li', {
+      textContent: `${element.name}`,
+    })
+    aChild(ulGenre, genreName)
   })
   const homePage = create('a', {
     href: `${movieDetails.homepage}`,
@@ -282,9 +302,22 @@ const getMovieDetail = async () => {
     textContent: 'Production Companies :',
     className: 'text-secondary',
   })
-  const divCompanies = create('div', {
-    textContent: `${movieDetails.production_companies[0].name}`,
+
+  const divProdCompanies = create('div', {
+    className: 'div-prod-companies',
   })
+
+  const listProdCompanies = create('ul', {
+    className: 'list-prod-companies',
+  })
+
+  movieDetails.production_companies.forEach((element) => {
+    const prodCompany = create('li', {
+      textContent: `${element.name}`,
+    })
+    aChild(listProdCompanies, prodCompany)
+  })
+
   aChild(divDetailsTop, aChild(divTopFirst, image))
   aChild(divDetailsTop, aChild(divTopSecond, h2Top))
   aChild(divDetailsTop, aChild(divTopSecond, pRating))
@@ -293,12 +326,12 @@ const getMovieDetail = async () => {
   aChild(divDetailsTop, aChild(divTopSecond, pReleaseDate))
   aChild(divDetailsTop, aChild(divTopSecond, pOverview))
   aChild(divDetailsTop, aChild(divTopSecond, h5))
-  aChild(divDetailsTop, aChild(divTopSecond, aChild(ulGenre, liGenre)))
+  aChild(divDetailsTop, aChild(divTopSecond, ulGenre))
   aChild(divDetailsTop, aChild(divTopSecond, homePage))
   aChild(divDetailsBottom, h2Bottom)
   aChild(divDetailsBottom, aChild(ulInfo, aChild(liInfo, span)))
   aChild(divDetailsBottom, h4)
-  aChild(divDetailsBottom, divCompanies)
+  aChild(divDetailsBottom, aChild(divProdCompanies, listProdCompanies))
   span.after(` $${addComasToNumber(movieDetails.budget)}`)
   aChild(document.getElementById('movie-details'), divDetailsTop)
   aChild(document.getElementById('movie-details'), divDetailsBottom)

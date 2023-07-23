@@ -296,14 +296,18 @@ section h2 {
   margin-top: 20px;
 }
 
-.details-bottom {
-}
+/* .details-bottom {} */
 
 .details-bottom li {
   margin: 15px 0;
   padding-bottom: 8px;
   border-bottom: 1px solid #fff;
   border-color: rgba(255, 255, 255, 0.1);
+}
+
+.list-prod-companies li {
+  margin: 0px 20px 5px 10px;
+  padding-bottom: 0;
 }
 
 /* Search */
