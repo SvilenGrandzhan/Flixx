@@ -10,24 +10,30 @@
 7. Movie details. use window.location.search and split method - done
 8. Create a back drop for movie and tv show on details pages. use type and background path - done
 9. TV show details - done
-10. Slider. Movies in theater, New tv shows slider
+10. Slider. Movies in theater - done
 11. Search. Use new URLSearchParams.get. Create a nested global search object
 
 Optional:
 
-1. check if can doo the rating with circle like it is showed in 137 : 0:42
+1. check if can doo the rating - done!!
 2. check if there is popular actors / people - done
 3. check if I can do actors / people details - done
-4. check if I can do slider for actors / people - not doing that
-   4.1 Optional to do pagination for popular movies
-   4.2 Optional to create every element with JS
+4. check if I can do slider for tv show
+5. Do pagination for popular movies
+6. To create every element with JS - done
+7. find a way to combine search fetch data api functions
+8. to create a want to watch list / page
+9. to make function for date format
 
 Challenges:
 
 1. Script.js - Ctr + F Challenge 1
 2. Script.js - Ctr + F Challenge 2
-3. style.css - to make a circle progress bar for rating Help: https://youtu.be/H2HYccAGR00
+3. style.css - to make a circle progress bar for rating - done
 
 To fix:
 
 1. background picture for actors can't fit
+2. position of rating inside circle
+3. slider rating class / font
+4. rating for actors

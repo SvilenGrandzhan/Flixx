@@ -5,50 +5,12 @@ const global = {
   API_KEY: 'e6da4e97035f119e8f32a02bd2fd3344',
   API_URL: 'https://api.themoviedb.org/3/',
 }
-// af to create a HTML element
-const create = (tagName, props) => {
-  return Object.assign(document.createElement(tagName), props)
-}
-// af to append child to parent
-const aChild = (parent, child) => {
-  parent.appendChild(child)
-  return parent
-}
-// af to add comas to number
-const addComasToNumber = (number) => {
-  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-}
-//Function to highlight selected category
-const highlightSelected = () => {
-  document.querySelectorAll('.nav-link').forEach((li) => {
-    // Compared href attribute to page pathname
-    if (li.getAttribute('href') === global.pathname) {
-      // Added new class 'Active' to highlight selected
-      li.classList.add('active')
-    }
-  })
-}
-//Arrow function to get the id of target element
-const getId = async (category) => {
-  const id = global.search.split('=')
-  const detail = await fetchData(`${category}/${id[1]}`)
-  // const detail = response.json()
-  // console.log(detail)
-  return detail
-}
-// Arrow function for background picture
-const backgroundPic = (type, backgroundPath) => {
-  // Need to find a way to do it with Create function
-  const backgroundDiv = document.createElement('div')
-  backgroundDiv.className = 'background-div'
-  backgroundDiv.style.backgroundImage = `url(${backgroundPath})`
-  aChild(document.querySelector(`#${type}-details`), backgroundDiv)
-}
 
 // Get popular movies
 const getPopularMovies = async () => {
   // const moviesList = await fetchData('movie/popular')
   const moviesList = await fetchData('movie/top_rated')
+  console.log(moviesList.results)
   moviesList.results.forEach((movie) => {
     const div = create('div', {
       className: 'card',
@@ -65,6 +27,9 @@ const getPopularMovies = async () => {
       src: movieImgSrc,
       alt: `${movie.title}`,
     })
+    const cardBodyRatingDiv = create('div', {
+      className: 'card-body-rating',
+    })
     const cardBodyDiv = create('div', {
       className: 'card-body',
     })
@@ -79,12 +44,22 @@ const getPopularMovies = async () => {
       className: 'text-muted',
       textContent: `Release: ${movie.release_date}`,
     })
+    const cardRatingDiv = create('div', {
+      className: 'card-rating',
+    })
+    const spanRating = create('span', {
+      className: 'progress-value',
+      textContent: '0%',
+    })
     // Challenge 2 : Have the feeling I can optimize this part. Maybe array?
     aChild(div, aChild(link, movieImage))
-    aChild(div, aChild(cardBodyDiv, h5))
-    aChild(div, aChild(cardBodyDiv, p))
-    aChild(div, aChild(cardBodyDiv, small))
+    aChild(div, aChild(cardBodyRatingDiv, cardBodyDiv))
+    aChild(cardBodyRatingDiv, aChild(cardBodyDiv, h5))
+    aChild(cardBodyRatingDiv, aChild(cardBodyDiv, p))
+    aChild(cardBodyRatingDiv, aChild(cardBodyDiv, small))
+    aChild(cardBodyRatingDiv, aChild(cardRatingDiv, spanRating))
     aChild(document.getElementById('popular-movies'), div)
+    showRating(10, 0, movie.vote_average * 10)
   })
 }
 // Get popular TV Shows
@@ -127,11 +102,9 @@ const getPopularTVShow = async () => {
       textContent: `Aired: ${tvShow.first_air_date}`,
     })
     const cardRatingDiv = create('div', {
-      id: 'card-rating',
       className: 'card-rating',
     })
     const spanRating = create('span', {
-      id: 'progress-value',
       className: 'progress-value',
       textContent: '0%',
     })
@@ -142,36 +115,8 @@ const getPopularTVShow = async () => {
     aChild(cardBodyRatingDiv, aChild(cardBodyDiv, small))
     aChild(cardBodyRatingDiv, aChild(cardRatingDiv, spanRating))
     aChild(document.getElementById('popular-shows'), div)
-    change(spanRating, `${tvShow.vote_average * 10}%`)
-    change(spanRating, 10, 89)
+    showRating(10, 0, tvShow.vote_average * 10)
   })
-}
-
-// Circler Progress Bar
-// function showRating(rating, progressValue, circularProgress) {
-//   // console.log(rating)
-//   let speed = 10
-//   let progressStartValue = 0
-//   let progressEndValue = rating
-//   // let progressValue = document.getElementById('progress-value')
-//   // let circularProgress = document.getElementById('card-rating')
-//   let progress = setInterval(() => {
-//     progressStartValue++
-//     progressValue.textContent = `${progressStartValue}%`
-//     circularProgress.style.background = `conic-gradient(rgb(0,128,0) ${
-//       progressStartValue * 3.6
-//     }deg, #fff 0deg)`
-//     if (progressStartValue == progressEndValue) {
-//       clearInterval(progress)
-//     }
-//   }, speed)
-// }
-
-function change(htmlElement, beginValue, endValue) {
-  do {
-    beginValue++
-    htmlElement.textContent = beginValue
-  } while (beginValue == endValue)
 }
 
 // Get popular Actors
@@ -527,6 +472,140 @@ const getActorDetails = async () => {
   document.getElementById('actor-details').appendChild(divDetailsBottom)
 }
 
+//Get Now playing
+const getNowPlaying = async () => {
+  const nowPlaying = await fetchData('movie/now_playing')
+  nowPlaying.results.forEach((movieNowPlaying) => {
+    const div = document.querySelector('.swiper-wrapper')
+    const swiperSlide = create('div', {
+      className: 'swiper-slide',
+    })
+    const movieLink = create('a', {
+      href: `movie-details.html?id=${movieNowPlaying.id}`,
+    })
+    const movieNowPlayingImgSrc =
+      movieNowPlaying.poster_path == null
+        ? 'images/no-image.jpg'
+        : `https://image.tmdb.org/t/p/w500${movieNowPlaying.poster_path}`
+    const movieNowPlayingImg = create('img', {
+      src: movieNowPlayingImgSrc,
+      alt: `${movieNowPlaying.title}`,
+    })
+    const h4 = create('h4', {
+      className: 'swiper-rating',
+    })
+    const i = create('i', {
+      className: 'fas fa-star text-secondary',
+      textContent: ` ${movieNowPlaying.vote_average} / 10`,
+    })
+    aChild(swiperSlide, aChild(movieLink, movieNowPlayingImg))
+    aChild(swiperSlide, aChild(h4, i))
+    aChild(div, swiperSlide)
+    initSwiper()
+  })
+}
+//getSearchMovies
+// const getSearchMovie = async () => {
+//   // const searchMovieName = await search('movie', searchQuery)
+//   const searchMovieName = await search('movie')
+//   console.log(searchMovieName)
+// }
+// af to create a HTML element
+const create = (tagName, props) => {
+  return Object.assign(document.createElement(tagName), props)
+}
+// af to append child to parent
+const aChild = (parent, child) => {
+  parent.appendChild(child)
+  return parent
+}
+// af to add comas to number
+const addComasToNumber = (number) => {
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+}
+//Function to highlight selected category
+const highlightSelected = () => {
+  document.querySelectorAll('.nav-link').forEach((li) => {
+    // Compared href attribute to page pathname
+    if (li.getAttribute('href') === global.pathname) {
+      // Added new class 'Active' to highlight selected
+      li.classList.add('active')
+    }
+  })
+}
+// Arrow function to get search queries
+const getSearchQueries = async () => {
+  const type = global.search.split('=', '&') // Start Here!
+  console.log(type)
+}
+
+//Arrow function to get the id of target element
+const getId = async (category) => {
+  const id = global.search.split('=')
+  const detail = await fetchData(`${category}/${id[1]}`)
+  // const detail = response.json()
+  // console.log(detail)
+  return detail
+}
+// Arrow function for background picture
+const backgroundPic = (type, backgroundPath) => {
+  // Need to find a way to do it with Create function
+  const backgroundDiv = document.createElement('div')
+  backgroundDiv.className = 'background-div'
+  backgroundDiv.style.backgroundImage = `url(${backgroundPath})`
+  aChild(document.querySelector(`#${type}-details`), backgroundDiv)
+}
+// Circler Progress Bar
+function showRating(speed, progressStartValue, progressEndValue) {
+  let array = document.querySelectorAll('.card-rating')
+  let progress = setInterval(() => {
+    progressStartValue++
+    array.forEach((element) => {
+      element.firstElementChild.textContent = `${progressStartValue}%`
+      element.style.background = `conic-gradient(rgb(0, 128, 0) ${
+        progressStartValue * 3.6
+      }deg, #fff 0deg)`
+      if (progressStartValue === progressEndValue) {
+        clearInterval(progress)
+      }
+    })
+  }, speed)
+}
+
+//Create swiper
+const initSwiper = () => {
+  const swiper = new Swiper('.swiper', {
+    slidesPerView: 1,
+    spaceBetween: 30,
+    freeMode: true,
+    loop: true,
+    autoplay: {
+      delay: 4000,
+      disableOnInteraction: false,
+    },
+    breakpoints: {
+      500: {
+        slidesPerView: 2,
+      },
+      700: {
+        slidesPerView: 3,
+      },
+      1200: {
+        slidesPerView: 4,
+      },
+    },
+  })
+}
+
+//API search request
+const search = async (type, query) => {
+  const response = await fetch(
+    `${global.API_URL}search/${type}?api_key=${global.API_KEY}&query=${query}&language=en-US`
+  )
+  const data = response.json()
+  return data
+}
+
 //General function for API Get request
 const fetchData = async (reference) => {
   const response = await fetch(
@@ -542,6 +621,7 @@ const init = () => {
     case '/index.html':
     case '/':
       getPopularMovies()
+      getNowPlaying()
       break
     case '/shows.html':
       getPopularTVShow()
@@ -550,7 +630,8 @@ const init = () => {
       getPopularActors()
       break
     case '/search.html':
-      console.log(global.pathname)
+      // search()
+      getSearchQueries()
       break
     case '/movie-details.html':
       getMovieDetail()
