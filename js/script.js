@@ -4,6 +4,12 @@ const global = {
   search: window.location.search,
   API_KEY: 'e6da4e97035f119e8f32a02bd2fd3344',
   API_URL: 'https://api.themoviedb.org/3/',
+  searchQuery: {
+    term: '',
+    type: '',
+    page: 1,
+    totalPages: 1,
+  },
 }
 
 // Get popular movies
@@ -18,10 +24,7 @@ const getPopularMovies = async () => {
     const link = create('a', {
       href: `movie-details.html?id=${movie.id}`,
     })
-    const movieImgSrc =
-      movie.poster_path == null
-        ? 'images/no-image.jpg'
-        : `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+    const movieImgSrc = movie.poster_path == null ? 'images/no-image.jpg' : `https://image.tmdb.org/t/p/w500${movie.poster_path}`
     const movieImage = create('img', {
       className: 'card-img-top',
       src: movieImgSrc,
@@ -74,10 +77,7 @@ const getPopularTVShow = async () => {
     const link = create('a', {
       href: `tv-details.html?id=${tvShow.id}`,
     })
-    const tvShowImgSrc =
-      tvShow.poster_path == null
-        ? 'images/no-image.jpg'
-        : `https://image.tmdb.org/t/p/w500${tvShow.poster_path}`
+    const tvShowImgSrc = tvShow.poster_path == null ? 'images/no-image.jpg' : `https://image.tmdb.org/t/p/w500${tvShow.poster_path}`
 
     const tvShowImage = create('img', {
       src: tvShowImgSrc,
@@ -130,10 +130,7 @@ const getPopularActors = async () => {
     const link = create('a', {
       href: `actor-details.html?id=${actor.id}`,
     })
-    const ActorImgSrc =
-      actor.profile_path == null
-        ? 'images/no-image.jpg'
-        : `https://image.tmdb.org/t/p/w500${actor.profile_path}`
+    const ActorImgSrc = actor.profile_path == null ? 'images/no-image.jpg' : `https://image.tmdb.org/t/p/w500${actor.profile_path}`
     const actorImage = create('img', {
       src: ActorImgSrc,
       className: 'card-img-top',
@@ -151,11 +148,7 @@ const getPopularActors = async () => {
     })
     const small = create('small', {
       className: 'text-muted',
-      textContent: `Popular for "${
-        actor.known_for[0].media_type == 'tv'
-          ? actor.known_for[0].name
-          : actor.known_for[0].title
-      }"`,
+      textContent: `Popular for "${actor.known_for[0].media_type == 'tv' ? actor.known_for[0].name : actor.known_for[0].title}"`,
     })
     aChild(div, aChild(link, actorImage))
     aChild(div, aChild(cardBodyDiv, h5))
@@ -170,20 +163,14 @@ const getMovieDetail = async () => {
   // calling getId and passing movie as category
   const movieDetails = await getId('movie')
   console.log(movieDetails)
-  backgroundPic(
-    'movie',
-    `https://image.tmdb.org/t/p/original${movieDetails.backdrop_path}`
-  )
+  backgroundPic('movie', `https://image.tmdb.org/t/p/original${movieDetails.backdrop_path}`)
   const divDetailsTop = create('div', {
     className: 'details-top',
   })
   const divTopFirst = create('div', {
     id: 'top-first',
   })
-  const movieDetailsImgSrc =
-    movieDetails.poster_path == null
-      ? 'images/no-image.jpg'
-      : `https://image.tmdb.org/t/p/w500${movieDetails.poster_path}`
+  const movieDetailsImgSrc = movieDetails.poster_path == null ? 'images/no-image.jpg' : `https://image.tmdb.org/t/p/w500${movieDetails.poster_path}`
   const image = create('img', {
     src: movieDetailsImgSrc,
     className: 'card-img-top',
@@ -286,20 +273,14 @@ const getMovieDetail = async () => {
 const getTvShowDetails = async () => {
   const tvShowDetails = await getId('tv')
   console.log(tvShowDetails)
-  backgroundPic(
-    'show',
-    `https://image.tmdb.org/t/p/original${tvShowDetails.backdrop_path}`
-  )
+  backgroundPic('show', `https://image.tmdb.org/t/p/original${tvShowDetails.backdrop_path}`)
   const divDetailsTop = create('div', {
     className: 'details-top',
   })
   const divTopFirst = create('div', {
     id: 'top-fist',
   })
-  const tvShowDetailsImgSrv =
-    tvShowDetails.poster_path == null
-      ? 'images/no-image.jpg'
-      : `https://image.tmdb.org/t/p/w500${tvShowDetails.poster_path}`
+  const tvShowDetailsImgSrv = tvShowDetails.poster_path == null ? 'images/no-image.jpg' : `https://image.tmdb.org/t/p/w500${tvShowDetails.poster_path}`
   const image = create('img', {
     src: tvShowDetailsImgSrv,
     className: ' card-img-top',
@@ -389,15 +370,9 @@ const getTvShowDetails = async () => {
 const getActorDetails = async () => {
   const actorDetails = await getId('person')
   console.log(actorDetails)
-  const actorDetailsImgSrc =
-    actorDetails.profile_path == null
-      ? 'images/no-image.jpg'
-      : `https://image.tmdb.org/t/p/w500${actorDetails.profile_path}`
+  const actorDetailsImgSrc = actorDetails.profile_path == null ? 'images/no-image.jpg' : `https://image.tmdb.org/t/p/w500${actorDetails.profile_path}`
   // Challenge 1 To find a way to do it without repeating
-  const actorDetailsBackGImgSrc =
-    actorDetails.profile_path == null
-      ? 'images/no-image.jpg'
-      : `https://image.tmdb.org/t/p/original${actorDetails.profile_path}`
+  const actorDetailsBackGImgSrc = actorDetails.profile_path == null ? 'images/no-image.jpg' : `https://image.tmdb.org/t/p/original${actorDetails.profile_path}`
   backgroundPic('actor', `${actorDetailsBackGImgSrc}`)
   const gender = actorDetails.gender == 2 ? 'Male' : 'Female'
   const divDetailsTop = create('div', {
@@ -483,10 +458,7 @@ const getNowPlaying = async () => {
     const movieLink = create('a', {
       href: `movie-details.html?id=${movieNowPlaying.id}`,
     })
-    const movieNowPlayingImgSrc =
-      movieNowPlaying.poster_path == null
-        ? 'images/no-image.jpg'
-        : `https://image.tmdb.org/t/p/w500${movieNowPlaying.poster_path}`
+    const movieNowPlayingImgSrc = movieNowPlaying.poster_path == null ? 'images/no-image.jpg' : `https://image.tmdb.org/t/p/w500${movieNowPlaying.poster_path}`
     const movieNowPlayingImg = create('img', {
       src: movieNowPlayingImgSrc,
       alt: `${movieNowPlaying.title}`,
@@ -504,12 +476,47 @@ const getNowPlaying = async () => {
     initSwiper()
   })
 }
-//getSearchMovies
-// const getSearchMovie = async () => {
-//   // const searchMovieName = await search('movie', searchQuery)
-//   const searchMovieName = await search('movie')
-//   console.log(searchMovieName)
-// }
+
+// API get Search request
+const searchList = async () => {
+  const searchList = await getSearchQueries()
+  console.log(searchList.results)
+  searchList.results.forEach((searchElement) => {
+    // backgroundPic(global.searchQuery.type, `https://image.tmdb.org/t/p/original${searchElement.backdrop_path}`)
+    const div = create('div', {
+      className: 'card',
+    })
+    const imageLink = create('a', {
+      href: `movie-details.html?id=${searchElement.id}`,
+    })
+    const searchElementImgSrc = searchElement.poster_path == null ? 'images/no-image.jpg' : `https://image.tmdb.org/t/p/w500${searchElement.poster_path}`
+    const searchElementImage = create('img', {
+      src: searchElementImgSrc,
+      className: 'card-img-top',
+      alt: global.searchQuery.type == 'tv' ? searchElement.original_name : searchElement.original_title,
+    })
+    const cardBodyDiv = create('div', {
+      className: 'card-body',
+    })
+    const cardBodyTitle = create('h5', {
+      className: 'card-title',
+      textContent: global.searchQuery.type == 'tv' ? searchElement.original_name : searchElement.original_title,
+    })
+    const pCardText = create('p', {
+      className: 'card-text',
+    })
+    const smallText = create('small', {
+      className: 'text-muted',
+      textContent: global.searchQuery.type == 'movie' ? searchElement.release_date : searchElement.first_air_date,
+    })
+    aChild(cardBodyDiv, cardBodyTitle)
+    aChild(div, aChild(imageLink, searchElementImage))
+    aChild(cardBodyDiv, aChild(pCardText, smallText))
+    aChild(div, cardBodyDiv)
+    aChild(document.getElementById('search-results'), div)
+  })
+}
+
 // af to create a HTML element
 const create = (tagName, props) => {
   return Object.assign(document.createElement(tagName), props)
@@ -533,18 +540,11 @@ const highlightSelected = () => {
     }
   })
 }
-// Arrow function to get search queries
-const getSearchQueries = async () => {
-  const type = global.search.split('=', '&') // Start Here!
-  console.log(type)
-}
 
 //Arrow function to get the id of target element
 const getId = async (category) => {
-  const id = global.search.split('=')
+  const id = global.search.slice('=')
   const detail = await fetchData(`${category}/${id[1]}`)
-  // const detail = response.json()
-  // console.log(detail)
   return detail
 }
 // Arrow function for background picture
@@ -562,9 +562,7 @@ function showRating(speed, progressStartValue, progressEndValue) {
     progressStartValue++
     array.forEach((element) => {
       element.firstElementChild.textContent = `${progressStartValue}%`
-      element.style.background = `conic-gradient(rgb(0, 128, 0) ${
-        progressStartValue * 3.6
-      }deg, #fff 0deg)`
+      element.style.background = `conic-gradient(rgb(0, 128, 0) ${progressStartValue * 3.6}deg, #fff 0deg)`
       if (progressStartValue === progressEndValue) {
         clearInterval(progress)
       }
@@ -574,6 +572,7 @@ function showRating(speed, progressStartValue, progressEndValue) {
 
 //Create swiper
 const initSwiper = () => {
+  // !Something is wrong here
   const swiper = new Swiper('.swiper', {
     slidesPerView: 1,
     spaceBetween: 30,
@@ -597,20 +596,18 @@ const initSwiper = () => {
   })
 }
 
-//API search request
-const search = async (type, query) => {
-  const response = await fetch(
-    `${global.API_URL}search/${type}?api_key=${global.API_KEY}&query=${query}&language=en-US`
-  )
+// Arrow function to get search queries
+const getSearchQueries = async () => {
+  global.searchQuery.type = new URLSearchParams(global.search).get('type')
+  global.searchQuery.term = new URLSearchParams(global.search).get('search-term')
+  const response = await fetch(`${global.API_URL}search/${global.searchQuery.type}?api_key=${global.API_KEY}&query=${global.searchQuery.term}&language=en-US&sort_by=vote_average.desc&page=${global.searchQuery.page}`)
   const data = response.json()
   return data
 }
 
 //General function for API Get request
 const fetchData = async (reference) => {
-  const response = await fetch(
-    `${global.API_URL}${reference}?api_key=${global.API_KEY}&language=en-US&sort_by=vote_average.desc`
-  )
+  const response = await fetch(`${global.API_URL}${reference}?api_key=${global.API_KEY}&language=en-US&sort_by=vote_average.desc`)
   const data = await response.json()
   return data
 }
@@ -630,8 +627,8 @@ const init = () => {
       getPopularActors()
       break
     case '/search.html':
-      // search()
-      getSearchQueries()
+      // getSearchQueries()
+      searchList()
       break
     case '/movie-details.html':
       getMovieDetail()

@@ -24,6 +24,8 @@ Optional:
 7. find a way to combine search fetch data api functions
 8. to create a want to watch list / page
 9. to make function for date format
+10. to make slider for TV Shows
+11. Add alert function in case search-term is null or empty
 
 Challenges:
 
@@ -37,3 +39,4 @@ To fix:
 2. position of rating inside circle
 3. slider rating class / font
 4. rating for actors
+5. Ctr + F Something is wrong here
