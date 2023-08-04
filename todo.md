@@ -11,7 +11,8 @@
 8. Create a back drop for movie and tv show on details pages. use type and background path - done
 9. TV show details - done
 10. Slider. Movies in theater - done
-11. Search. Use new URLSearchParams.get. Create a nested global search object
+11. Search. Use new URLSearchParams.get. Create a nested global search object - done
+12. Create alert function
 
 Optional:
 
@@ -26,12 +27,14 @@ Optional:
 9. to make function for date format
 10. to make slider for TV Shows
 11. Add alert function in case search-term is null or empty
+12. If home page is not available to redirect to something else
 
 Challenges:
 
 1. Script.js - Ctr + F Challenge 1
 2. Script.js - Ctr + F Challenge 2
 3. style.css - to make a circle progress bar for rating - done
+4. modify fetch Data function to work with data and search
 
 To fix:
 
@@ -40,3 +43,4 @@ To fix:
 3. slider rating class / font
 4. rating for actors
 5. Ctr + F Something is wrong here
+6. TVshows are showing wrong rating

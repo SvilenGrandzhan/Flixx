@@ -9,13 +9,14 @@ const global = {
     type: '',
     page: 1,
     totalPages: 1,
+    totalResults: 0,
   },
 }
 
 // Get popular movies
 const getPopularMovies = async () => {
-  // const moviesList = await fetchData('movie/popular')
-  const moviesList = await fetchData('movie/top_rated')
+  const moviesList = await fetchData('movie/popular')
+  // const moviesList = await fetchData('movie/top_rated')
   console.log(moviesList.results)
   moviesList.results.forEach((movie) => {
     const div = create('div', {
@@ -67,8 +68,8 @@ const getPopularMovies = async () => {
 }
 // Get popular TV Shows
 const getPopularTVShow = async () => {
-  // const tvShowsList = await fetchData('tv/popular')
-  const tvShowsList = await fetchData('tv/top_rated')
+  const tvShowsList = await fetchData('tv/popular')
+  // const tvShowsList = await fetchData('tv/top_rated')
   console.log(tvShowsList.results)
   tvShowsList.results.forEach((tvShow) => {
     const div = create('div', {
@@ -116,13 +117,16 @@ const getPopularTVShow = async () => {
     aChild(cardBodyRatingDiv, aChild(cardRatingDiv, spanRating))
     aChild(document.getElementById('popular-shows'), div)
     showRating(10, 0, tvShow.vote_average * 10)
+    console.log(tvShow.vote_average)
+    // ! To fix a bug. with tv/popular is working fine, it is not working with top_rated
+    // ! To check API syntax
   })
 }
 
 // Get popular Actors
 const getPopularActors = async () => {
   const actors = await fetchData('person/popular')
-  console.log(actors)
+  console.log(actors.results)
   actors.results.forEach((actor) => {
     const div = create('div', {
       className: 'card',
@@ -479,28 +483,86 @@ const getNowPlaying = async () => {
 
 // API get Search request
 const searchList = async () => {
-  const searchList = await getSearchQueries()
-  console.log(searchList.results)
-  searchList.results.forEach((searchElement) => {
+  global.searchQuery.type = new URLSearchParams(global.search).get('type')
+  global.searchQuery.term = new URLSearchParams(global.search).get('search-term')
+  // TODO Start here, find away to clear page
+  // document.getElementById('search-results').innerHTML = ''
+  // document.getElementById('search-results-heading').innerHTML = ''
+  // document.getElementById('pagination').innerHTML = ''
+  if (global.searchQuery.term !== '' && global.searchQuery.term !== null) {
+    const { results, page, total_pages, total_results } = await getSearchQueries()
+    displaySearchList(results)
+    global.searchQuery.page = page
+    global.searchQuery.totalPages = total_pages
+    global.searchQuery.totalResults = total_results
+    const h2TotalResults = create('h2', {
+      textContent: `Total Results ${global.searchQuery.totalResults}`,
+    })
+    const paginationDiv = create('div', {
+      className: 'pagination',
+    })
+    const btnPrev = create('button', {
+      className: 'btn btn-primary',
+      id: 'prev',
+      textContent: 'Prev',
+    })
+    const btnNext = create('button', {
+      className: 'btn btn-primary',
+      id: 'next',
+      textContent: 'Next',
+    })
+    const pageCounterDiv = create('div', {
+      className: 'page-counter',
+      textContent: `Page ${global.searchQuery.page} of ${global.searchQuery.totalPages}`,
+    })
+    aChild(paginationDiv, btnPrev)
+    aChild(paginationDiv, btnNext)
+    aChild(paginationDiv, pageCounterDiv)
+    aChild(document.getElementById('search-results-heading'), h2TotalResults)
+    aChild(document.getElementById('pagination'), paginationDiv)
+    if (global.searchQuery.page === 1) {
+      document.getElementById('prev').disabled = true
+    }
+    if (global.searchQuery.page === global.searchQuery.totalPages) {
+      document.getElementById('next').disabled = true
+    }
+    document.getElementById('next').addEventListener('click', async () => {
+      global.searchQuery.page++
+      const { results, total_pages } = await getSearchQueries()
+      displaySearchList(results)
+    })
+  } else {
+    alert('Error')
+  }
+  // TODO: find way to do it with ternary operator
+  // const { results } = global.searchQuery.term !== '' && global.searchQuery.term !== null ? await getSearchQueries() : console.log('boom')
+}
+
+const displaySearchList = async (resultsFound) => {
+  console.log(resultsFound)
+
+  resultsFound.forEach((searchElement) => {
+    // TODO: check the background picture
     // backgroundPic(global.searchQuery.type, `https://image.tmdb.org/t/p/original${searchElement.backdrop_path}`)
     const div = create('div', {
       className: 'card',
     })
     const imageLink = create('a', {
-      href: `movie-details.html?id=${searchElement.id}`,
+      href: `${global.searchQuery.type}-details.html?id=${searchElement.id}`,
     })
-    const searchElementImgSrc = searchElement.poster_path == null ? 'images/no-image.jpg' : `https://image.tmdb.org/t/p/w500${searchElement.poster_path}`
+    // TODO fix the profile pic conditions. Maybe make it external function
+    const searchElementImgSrc = searchElement.profile_path ? 'images/no-image.jpg' : searchElement.poster_path == null ? 'images/no-image.jpg' : global.searchQuery.type == 'person' ? `https://image.tmdb.org/t/p/w500${searchElement.profile_path}` : `https://image.tmdb.org/t/p/w500${searchElement.poster_path}`
     const searchElementImage = create('img', {
       src: searchElementImgSrc,
       className: 'card-img-top',
-      alt: global.searchQuery.type == 'tv' ? searchElement.original_name : searchElement.original_title,
+      alt: global.searchQuery.type == 'tv' ? searchElement.original_name : global.searchQuery.type == 'movie' ? searchElement.original_title : searchElement.original_name,
     })
     const cardBodyDiv = create('div', {
       className: 'card-body',
     })
     const cardBodyTitle = create('h5', {
       className: 'card-title',
-      textContent: global.searchQuery.type == 'tv' ? searchElement.original_name : searchElement.original_title,
+      textContent: global.searchQuery.type == 'tv' ? searchElement.original_name : global.searchQuery.type == 'movie' ? searchElement.original_title : searchElement.original_name,
     })
     const pCardText = create('p', {
       className: 'card-text',
@@ -515,6 +577,13 @@ const searchList = async () => {
     aChild(div, cardBodyDiv)
     aChild(document.getElementById('search-results'), div)
   })
+}
+
+const alert = (errorMessage) => {
+  console.log('boom')
+  const alertDiv = document.getElementById('alert')
+  alertDiv.classList.add('alert', 'alert-error')
+  alertDiv.textContent = errorMessage
 }
 
 // af to create a HTML element
@@ -543,7 +612,7 @@ const highlightSelected = () => {
 
 //Arrow function to get the id of target element
 const getId = async (category) => {
-  const id = global.search.slice('=')
+  const id = global.search.split('=')
   const detail = await fetchData(`${category}/${id[1]}`)
   return detail
 }
@@ -597,10 +666,9 @@ const initSwiper = () => {
 }
 
 // Arrow function to get search queries
+// TODO find a way to display only EN movies tv. check movie data base forum
 const getSearchQueries = async () => {
-  global.searchQuery.type = new URLSearchParams(global.search).get('type')
-  global.searchQuery.term = new URLSearchParams(global.search).get('search-term')
-  const response = await fetch(`${global.API_URL}search/${global.searchQuery.type}?api_key=${global.API_KEY}&query=${global.searchQuery.term}&language=en-US&sort_by=vote_average.desc&page=${global.searchQuery.page}`)
+  const response = await fetch(`${global.API_URL}search/${global.searchQuery.type}?api_key=${global.API_KEY}&query=${global.searchQuery.term}&language=en-US&with_original_language=en&sort_by=vote_average.desc&page=${global.searchQuery.page}`)
   const data = response.json()
   return data
 }
@@ -627,7 +695,6 @@ const init = () => {
       getPopularActors()
       break
     case '/search.html':
-      // getSearchQueries()
       searchList()
       break
     case '/movie-details.html':
