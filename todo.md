@@ -35,6 +35,7 @@ Challenges:
 2. Script.js - Ctr + F Challenge 2
 3. style.css - to make a circle progress bar for rating - done
 4. modify fetch Data function to work with data and search
+5. check all ToDo comments
 
 To fix:
 
@@ -44,3 +45,5 @@ To fix:
 4. rating for actors
 5. Ctr + F Something is wrong here
 6. TVshows are showing wrong rating
+7. Social media icons colors
+8. Final: check naming convention and organize comments

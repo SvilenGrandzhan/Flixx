@@ -17,7 +17,6 @@ const global = {
 const getPopularMovies = async () => {
   const moviesList = await fetchData('movie/popular')
   // const moviesList = await fetchData('movie/top_rated')
-  console.log(moviesList.results)
   moviesList.results.forEach((movie) => {
     const div = create('div', {
       className: 'card',
@@ -70,7 +69,6 @@ const getPopularMovies = async () => {
 const getPopularTVShow = async () => {
   const tvShowsList = await fetchData('tv/popular')
   // const tvShowsList = await fetchData('tv/top_rated')
-  console.log(tvShowsList.results)
   tvShowsList.results.forEach((tvShow) => {
     const div = create('div', {
       className: 'card',
@@ -117,7 +115,6 @@ const getPopularTVShow = async () => {
     aChild(cardBodyRatingDiv, aChild(cardRatingDiv, spanRating))
     aChild(document.getElementById('popular-shows'), div)
     showRating(10, 0, tvShow.vote_average * 10)
-    console.log(tvShow.vote_average)
     // ! To fix a bug. with tv/popular is working fine, it is not working with top_rated
     // ! To check API syntax
   })
@@ -126,7 +123,6 @@ const getPopularTVShow = async () => {
 // Get popular Actors
 const getPopularActors = async () => {
   const actors = await fetchData('person/popular')
-  console.log(actors.results)
   actors.results.forEach((actor) => {
     const div = create('div', {
       className: 'card',
@@ -166,7 +162,6 @@ const getPopularActors = async () => {
 const getMovieDetail = async () => {
   // calling getId and passing movie as category
   const movieDetails = await getId('movie')
-  console.log(movieDetails)
   backgroundPic('movie', `https://image.tmdb.org/t/p/original${movieDetails.backdrop_path}`)
   const divDetailsTop = create('div', {
     className: 'details-top',
@@ -276,7 +271,6 @@ const getMovieDetail = async () => {
 //Get TV show details
 const getTvShowDetails = async () => {
   const tvShowDetails = await getId('tv')
-  console.log(tvShowDetails)
   backgroundPic('show', `https://image.tmdb.org/t/p/original${tvShowDetails.backdrop_path}`)
   const divDetailsTop = create('div', {
     className: 'details-top',
@@ -373,7 +367,6 @@ const getTvShowDetails = async () => {
 //Get actor details
 const getActorDetails = async () => {
   const actorDetails = await getId('person')
-  console.log(actorDetails)
   const actorDetailsImgSrc = actorDetails.profile_path == null ? 'images/no-image.jpg' : `https://image.tmdb.org/t/p/w500${actorDetails.profile_path}`
   // Challenge 1 To find a way to do it without repeating
   const actorDetailsBackGImgSrc = actorDetails.profile_path == null ? 'images/no-image.jpg' : `https://image.tmdb.org/t/p/original${actorDetails.profile_path}`
@@ -485,52 +478,16 @@ const getNowPlaying = async () => {
 const searchList = async () => {
   global.searchQuery.type = new URLSearchParams(global.search).get('type')
   global.searchQuery.term = new URLSearchParams(global.search).get('search-term')
-  // TODO Start here, find away to clear page
-  // document.getElementById('search-results').innerHTML = ''
-  // document.getElementById('search-results-heading').innerHTML = ''
-  // document.getElementById('pagination').innerHTML = ''
   if (global.searchQuery.term !== '' && global.searchQuery.term !== null) {
     const { results, page, total_pages, total_results } = await getSearchQueries()
-    displaySearchList(results)
     global.searchQuery.page = page
     global.searchQuery.totalPages = total_pages
     global.searchQuery.totalResults = total_results
+    displaySearchList(results)
     const h2TotalResults = create('h2', {
       textContent: `Total Results ${global.searchQuery.totalResults}`,
     })
-    const paginationDiv = create('div', {
-      className: 'pagination',
-    })
-    const btnPrev = create('button', {
-      className: 'btn btn-primary',
-      id: 'prev',
-      textContent: 'Prev',
-    })
-    const btnNext = create('button', {
-      className: 'btn btn-primary',
-      id: 'next',
-      textContent: 'Next',
-    })
-    const pageCounterDiv = create('div', {
-      className: 'page-counter',
-      textContent: `Page ${global.searchQuery.page} of ${global.searchQuery.totalPages}`,
-    })
-    aChild(paginationDiv, btnPrev)
-    aChild(paginationDiv, btnNext)
-    aChild(paginationDiv, pageCounterDiv)
     aChild(document.getElementById('search-results-heading'), h2TotalResults)
-    aChild(document.getElementById('pagination'), paginationDiv)
-    if (global.searchQuery.page === 1) {
-      document.getElementById('prev').disabled = true
-    }
-    if (global.searchQuery.page === global.searchQuery.totalPages) {
-      document.getElementById('next').disabled = true
-    }
-    document.getElementById('next').addEventListener('click', async () => {
-      global.searchQuery.page++
-      const { results, total_pages } = await getSearchQueries()
-      displaySearchList(results)
-    })
   } else {
     alert('Error')
   }
@@ -538,9 +495,10 @@ const searchList = async () => {
   // const { results } = global.searchQuery.term !== '' && global.searchQuery.term !== null ? await getSearchQueries() : console.log('boom')
 }
 
-const displaySearchList = async (resultsFound) => {
-  console.log(resultsFound)
-
+const displaySearchList = (resultsFound) => {
+  removeChild('search-results')
+  removeChild('search-results-heading')
+  removeChild('pagination')
   resultsFound.forEach((searchElement) => {
     // TODO: check the background picture
     // backgroundPic(global.searchQuery.type, `https://image.tmdb.org/t/p/original${searchElement.backdrop_path}`)
@@ -577,10 +535,57 @@ const displaySearchList = async (resultsFound) => {
     aChild(div, cardBodyDiv)
     aChild(document.getElementById('search-results'), div)
   })
+  displayPagination()
+}
+
+const displayPagination = () => {
+  const divPagination = create('div', {
+    className: 'pagination',
+  })
+  const btnPrev = create('button', {
+    className: 'btn btn-primary',
+    id: 'prev',
+    textContent: 'Prev',
+  })
+  const btnNext = create('button', {
+    className: 'btn btn-primary',
+    id: 'next',
+    textContent: 'Next',
+  })
+  const divPageCounter = create('div', {
+    className: 'page-counter',
+    textContent: `Page ${global.searchQuery.page} of ${global.searchQuery.totalPages}`,
+  })
+  aChild(document.getElementById('pagination'), divPagination)
+  aChild(divPagination, btnPrev)
+  aChild(divPagination, btnNext)
+  aChild(divPagination, divPageCounter)
+  if (global.searchQuery.page === 1) {
+    document.getElementById('prev').disabled = true
+  }
+  if (global.searchQuery.page == global.searchQuery.totalPages) {
+    document.getElementById('next').disabled = true
+  }
+  document.getElementById('next').addEventListener('click', async () => {
+    global.searchQuery.page++
+    const { results, total_pages } = await getSearchQueries()
+    displaySearchList(results)
+  })
+  document.getElementById('prev').addEventListener('click', async () => {
+    global.searchQuery.page--
+    const { results, total_pages } = await getSearchQueries()
+    displaySearchList(results)
+  })
+}
+
+const removeChild = (parentID) => {
+  let parent = document.getElementById(parentID)
+  while (parent.firstChild) {
+    parent.removeChild(parent.firstChild)
+  }
 }
 
 const alert = (errorMessage) => {
-  console.log('boom')
   const alertDiv = document.getElementById('alert')
   alertDiv.classList.add('alert', 'alert-error')
   alertDiv.textContent = errorMessage
@@ -642,6 +647,7 @@ function showRating(speed, progressStartValue, progressEndValue) {
 //Create swiper
 const initSwiper = () => {
   // !Something is wrong here
+  // !Maybe return statement
   const swiper = new Swiper('.swiper', {
     slidesPerView: 1,
     spaceBetween: 30,
